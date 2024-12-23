@@ -1,0 +1,11 @@
+Library/
+Logs/
+Packages/
+ProjectSettings/
+UserSettings/
+
+.vs
+.vsconfig
+Something on Unity.sln
+
+*.meta
