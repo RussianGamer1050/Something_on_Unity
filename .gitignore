@@ -1,11 +1,13 @@
 Library/
 Logs/
+obj/
 Packages/
 ProjectSettings/
 UserSettings/
 
 .vs
 .vsconfig
-Something on Unity.sln
 
+*.sln
+*.csproj
 *.meta
