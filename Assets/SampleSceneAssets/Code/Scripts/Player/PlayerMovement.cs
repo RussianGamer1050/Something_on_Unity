@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -6,13 +7,14 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 5f; // Movement speed
     public float runSpeed = 8f; // Speed when running
     public float crouchSpeed = 2f; // Speed when crouching
-    
+
     // Height variables
     public float crouchHeight = 1f; // Height when crouched
     private float originalHeight; // Original height of the player
 
     // Variables for smooth movement
     public float acceleration = 10f; // How fast the player accelerates
+    public float runAcceleration = 5f; // Running acceleration factor
     public float deceleration = 8f; // How fast the player decelerates
 
     // Mouse look variables
@@ -20,9 +22,14 @@ public class PlayerMovement : MonoBehaviour
     public float verticalLookLimit = 90f; // Limit vertical look to ±90 degrees
     public Transform playerCamera; // Reference to the camera
 
+    // Physics variables
+    public float gravity = -9.81f; // Gravity value
+
     // Movement variables
     private CharacterController controller;
+    private Vector3 velocity;
     private Vector3 currentVelocity = Vector3.zero; // Tracks the current velocity
+    private bool isGrounded;
     private float xRotation = 0f; // Track vertical rotation
 
     // Audio variables
@@ -69,6 +76,14 @@ public class PlayerMovement : MonoBehaviour
     // Movement logic
     void HandleMovement()
     {
+        isGrounded = controller.isGrounded;
+
+        // Gravity
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
         // Get input for desired movement direction
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -78,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
         float currentSpeed = speed;
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            currentSpeed = runSpeed;
+            currentSpeed = Mathf.Lerp(currentSpeed, runSpeed, runAcceleration * Time.fixedDeltaTime);
         }
         else if (Input.GetKey(KeyCode.LeftControl))
         {
@@ -109,5 +124,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply movement
         controller.Move(currentVelocity * Time.fixedDeltaTime);
+
+        // Apply gravity
+        velocity.y += gravity * Time.fixedDeltaTime;
+        controller.Move(new Vector3(0, velocity.y, 0) * Time.fixedDeltaTime);
     }
 }
