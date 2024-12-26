@@ -95,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
         {
             currentSpeed = Mathf.Lerp(currentSpeed, runSpeed, runAcceleration * Time.fixedDeltaTime);
         }
-        else if (Input.GetKey(KeyCode.LeftControl))
+        else if (Input.GetKey(KeyCode.C)) // ctrl and fire1 is the same, so I need to add possibility to edit keybinds
         {
             currentSpeed = crouchSpeed;
             controller.height = Mathf.Lerp(controller.height, crouchHeight, 10f * Time.deltaTime);

@@ -10,6 +10,11 @@ public class WeaponFire : MonoBehaviour
 
     public float bulletSpreadAngle = 1f; // Spread angle in degrees
 
+    public float bulletDamage = 25f; // Damage per shot
+
+    public ParticleSystem muzzleFlash; // Drag your muzzle flash particle system here
+
+
     void FixedUpdate()
     {
         // Check if the player is firing and the cooldown has passed
@@ -22,6 +27,12 @@ public class WeaponFire : MonoBehaviour
 
     void FireWeapon()
     {
+        // Play the muzzle flash effect
+        if (muzzleFlash != null)
+        {
+            muzzleFlash.Play();
+        }
+
         // Generate random spread within a cone
         Vector3 randomSpread = Random.insideUnitCircle * Mathf.Tan(bulletSpreadAngle * Mathf.Deg2Rad);
         Vector3 spreadDirection = playerCamera.transform.forward + playerCamera.transform.TransformDirection(randomSpread);
@@ -34,6 +45,14 @@ public class WeaponFire : MonoBehaviour
         if (Physics.Raycast(ray, out hit, maxRange))
         {
             Debug.Log("Hit: " + hit.collider.name); // Log the name of the object hit
+
+            // Check if the object hit has a Health component
+            Health targetHealth = hit.collider.GetComponent<Health>();
+            if (targetHealth != null)
+            {
+                targetHealth.TakeDamage(bulletDamage);
+            }
+
             Debug.DrawLine(ray.origin, hit.point, Color.red, 1f); // Visualize the ray
         }
         else
