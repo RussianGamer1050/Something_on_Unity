@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 408995393}
   - component: {fileID: 408995392}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6249,7 +6249,7 @@ GameObject:
   - component: {fileID: 1819703534}
   - component: {fileID: 1819703533}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6354,7 +6354,7 @@ GameObject:
   - component: {fileID: 1871544995}
   - component: {fileID: 1871544994}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
