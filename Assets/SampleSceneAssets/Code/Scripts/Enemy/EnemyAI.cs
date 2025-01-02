@@ -9,16 +9,38 @@ public class EnemyAI : MonoBehaviour
     private Transform currentCoverPoint;
     private bool isInCover = false;
 
+    private Transform playerTransform;
+    private SphereCollider detectionCollider; // Detection collider reference
+    public float detectionRadius = 10f;
+    public float expandedRadius = 20f;
+    private bool playerDetected = false;
+
     private static Dictionary<Transform, bool> coverPointStatus = new Dictionary<Transform, bool>();
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         InitializeCoverPointStatus();
-        MoveToNearestCover();
+
+        detectionCollider = GetComponent<SphereCollider>();
+        if (detectionCollider == null)
+        {
+            detectionCollider = gameObject.AddComponent<SphereCollider>();
+            detectionCollider.isTrigger = true;
+            detectionCollider.radius = detectionRadius;
+        }
     }
     void Update()
     {
+        if (playerDetected && playerTransform != null)
+        {
+            // Rotate to face the player while moving
+            Vector3 directionToPlayer = playerTransform.position - transform.position;
+            directionToPlayer.y = 0; // Ignore vertical rotation
+            Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+
         if (!isInCover && !agent.pathPending && agent.remainingDistance < 0.5f)
         {
             isInCover = true;
@@ -73,6 +95,36 @@ public class EnemyAI : MonoBehaviour
         if (currentCoverPoint != null && coverPointStatus.ContainsKey(currentCoverPoint))
         {
             coverPointStatus[currentCoverPoint] = false;
+        }
+    }
+
+    // Player detection logic
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && !playerDetected)
+        {
+            playerDetected = true;
+            playerTransform = other.transform; // Store reference to the player
+            Debug.Log(gameObject.name + " detected the player!");
+
+            // Expand detection radius
+            detectionCollider.radius = expandedRadius;
+
+            // Move to the nearest cover
+            MoveToNearestCover();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerDetected = false;
+            playerTransform = null;
+            Debug.Log(gameObject.name + " lost sight of the player.");
+
+            // Restore original detection radius
+            detectionCollider.radius = detectionRadius;
         }
     }
 }
